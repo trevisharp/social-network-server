@@ -5,27 +5,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using Model;
-using Generators;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<Context>(
-    opt => opt.UseInMemoryDatabase("local")
+    opt => opt.UseInMemoryDatabase("inmemorydb")
 );
+builder.Services.AddSingleton<GeneratorService>();
 
 var app = builder.Build();
 
-bool started = false;
 app.Use(async (ctx, next) =>
 {
-    if (started)
-        await next.Invoke();
-    
-    var db = ctx.RequestServices.GetService<Context>() ?? throw new Exception();
-    var gen = new DefaultGenerator(db);
-    gen.Generate();
+    var gen = ctx.RequestServices.GetService<GeneratorService>();
+    if (gen is null)
+    {
+        Console.WriteLine("GeneratorService is not configured.");
+        return;
+    }
 
-    started = true;
+    gen.GenerateIfNeeded();
     await next.Invoke();
 });
 
