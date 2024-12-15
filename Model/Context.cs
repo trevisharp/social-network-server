@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Model;
 
-public class Context : DbContext
+public class Context(DbContextOptions<Context> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Image> Images { get; set; }
