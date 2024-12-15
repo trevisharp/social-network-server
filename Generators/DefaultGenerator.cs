@@ -66,17 +66,16 @@ public class DefaultGenerator(Context context)
 
     User GenerateUser()
     {
-        var name = names.Next();
-        name += surnames.Next();
+        var name = $"{names.Next()} {surnames.Next()}";
         if (30.Prob())
-            name += surnames.Next();
+            name += $" {surnames.Next()}";
 
-        var username = keys.Next();
-        int prob = 85;
+        var username = keys.Next().ToLower();
+        int prob = 95;
         while (prob.Prob())
         {
-            username += keys.Next();
-            prob -= 35;
+            username += keys.Next().ToLower();
+            prob -= 45;
         }
 
         var bio = "";
